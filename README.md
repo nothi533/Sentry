@@ -13,7 +13,7 @@
 
 Sentry is a Dagger module that audits containers for security compliance. It performs automated security checks, integrates with multiple vulnerability scanners, and generates compliance-ready reports for CI/CD pipelines.
 
-This README is the single source of documentation for this module. It is written for both non-technical and technical readers.
+This README is the single source of documentation for this module.
 
 </div>
 
@@ -24,7 +24,7 @@ This README is the single source of documentation for this module. It is written
 - [Overview](#overview)
 - [Features](#features)
 - [Glossary](#glossary)
-- [Quick Start (No Technical Knowledge Required)](#quick-start-no-technical-knowledge-required)
+- [Quick Start](#quick-start)
 - [Quick Start (Developers)](#quick-start-developers)
 - [Architecture](#architecture)
 - [Scanner Guide](#scanner-guide)
@@ -79,7 +79,7 @@ Sentry helps development teams audit container images for security vulnerabiliti
 
 ---
 
-## Quick Start (No Technical Knowledge Required)
+## Quick Start
 
 ### Prerequisites
 
