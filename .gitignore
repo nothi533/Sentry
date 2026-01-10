@@ -35,3 +35,6 @@ go.work.sum
 CLAUDE.md
 sentry.md
 GEMINI.md
+
+# Dagger CLI binary
+bin/
