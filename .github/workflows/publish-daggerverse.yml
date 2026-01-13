@@ -1,0 +1,43 @@
+name: Publish to Daggerverse
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.dagger/**'
+      - 'dagger.json'
+      - '.github/workflows/publish-daggerverse.yml'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Dagger CLI
+        run: |
+          curl -fsSL https://dl.dagger.io/dagger/install.sh | sh
+          sudo mv bin/dagger /usr/local/bin/
+          dagger version
+
+      - name: Verify module structure
+        run: |
+          dagger functions
+
+      - name: Publish to Daggerverse
+        run: |
+          # Get the current commit SHA
+          COMMIT_SHA=$(git rev-parse HEAD)
+          MODULE_REF="github.com/${{ github.repository }}@${COMMIT_SHA}"
+
+          echo "Publishing module: ${MODULE_REF}"
+
+          # Trigger Daggerverse crawl via API
+          curl -X POST "https://daggerverse.dev/api/crawl" \
+            -H "Content-Type: application/json" \
+            -d "{\"ref\":\"${MODULE_REF}\"}"
+
+          echo "Published to Daggerverse!"
+          echo "View at: https://daggerverse.dev/mod/github.com/${{ github.repository }}"
