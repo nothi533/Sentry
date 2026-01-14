@@ -53,6 +53,50 @@ func calculateScore(checks []SecurityCheck, vulnSummary VulnerabilitySummary) in
 	return score
 }
 
+// filterIgnoredCVEs removes vulnerabilities with CVE IDs in the ignore list
+func filterIgnoredCVEs(vulns []Vulnerability, ignoredCVEs []string) []Vulnerability {
+	if len(ignoredCVEs) == 0 {
+		return vulns
+	}
+
+	// Create a map for O(1) lookup
+	ignoreMap := make(map[string]bool)
+	for _, cve := range ignoredCVEs {
+		ignoreMap[cve] = true
+	}
+
+	// Filter vulnerabilities
+	filtered := []Vulnerability{}
+	for _, vuln := range vulns {
+		if !ignoreMap[vuln.CVEID] {
+			filtered = append(filtered, vuln)
+		}
+	}
+
+	return filtered
+}
+
+// recalculateSummary recalculates vulnerability summary after filtering
+func recalculateSummary(vulns []Vulnerability) VulnerabilitySummary {
+	summary := VulnerabilitySummary{}
+
+	for _, vuln := range vulns {
+		summary.Total++
+		switch vuln.Severity {
+		case SeverityCritical:
+			summary.Critical++
+		case SeverityHigh:
+			summary.High++
+		case SeverityMedium:
+			summary.Medium++
+		case SeverityLow:
+			summary.Low++
+		}
+	}
+
+	return summary
+}
+
 // ============================================================================
 // MAIN AUDIT FUNCTION
 // ============================================================================
@@ -72,6 +116,11 @@ func (c *AuditConfig) Audit(ctx context.Context) (*AuditResult, error) {
 	if c.Scanner.Type != ScannerNone {
 		vulns, summary, err := runScanner(ctx, c.Container, c.Scanner)
 		if err == nil {
+			// Filter out ignored CVEs if any are specified
+			if len(c.IgnoredCVEs) > 0 {
+				vulns = filterIgnoredCVEs(vulns, c.IgnoredCVEs)
+				summary = recalculateSummary(vulns)
+			}
 			result.Vulnerabilities = vulns
 			result.VulnSummary = summary
 		}
@@ -143,6 +192,38 @@ func (c *AuditConfig) ExitCode(ctx context.Context) (int, error) {
 		return 0, nil
 	}
 	return 1, nil
+}
+
+// Score returns just the numeric security score (0-100)
+func (c *AuditConfig) Score(ctx context.Context) (int, error) {
+	result, err := c.Audit(ctx)
+	if err != nil {
+		return 0, err
+	}
+	return result.Score, nil
+}
+
+// Summary generates a concise one-line status summary
+func (c *AuditConfig) Summary(ctx context.Context) (string, error) {
+	result, err := c.Audit(ctx)
+	if err != nil {
+		return "", err
+	}
+
+	status := "PASSED"
+	if !result.Passed {
+		status = "FAILED"
+	}
+
+	passed := countByStatus(result.Checks, StatusPass)
+	failed := countByStatus(result.Checks, StatusFail)
+
+	return status + ": Score " + intToStr(result.Score) + "/100 | " +
+		"Checks: " + intToStr(passed) + " passed, " + intToStr(failed) + " failed | " +
+		"Vulnerabilities: " + intToStr(result.VulnSummary.Total) + " total (" +
+		intToStr(result.VulnSummary.Critical) + " critical, " +
+		intToStr(result.VulnSummary.High) + " high, " +
+		intToStr(result.VulnSummary.Medium) + " medium)", nil
 }
 
 // ============================================================================

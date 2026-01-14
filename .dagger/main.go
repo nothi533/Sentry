@@ -34,6 +34,8 @@
 package main
 
 import (
+	"context"
+
 	"dagger/sentry/internal/dagger"
 )
 
@@ -49,6 +51,7 @@ type AuditConfig struct {
 	CheckSecrets   bool              // Check for secrets in env vars
 	CheckNonRoot   bool              // Check for non-root user
 	CheckHealth    bool              // Check for healthcheck
+	IgnoredCVEs    []string          // CVE IDs to ignore (suppress from results)
 }
 
 // ============================================================================
@@ -73,6 +76,18 @@ func (m *Sentry) Scan(
 		CheckNonRoot:   true,
 		CheckHealth:    true,
 	}
+}
+
+// ScanImage initializes a security audit from a container image reference
+// This is a convenience method that pulls the image and scans it
+// Returns an AuditConfig that can be further configured with chain methods
+func (m *Sentry) ScanImage(
+	ctx context.Context,
+	// +required
+	imageRef string, // Container image reference (e.g., "nginx:latest", "alpine:3.18")
+) *AuditConfig {
+	container := dag.Container().From(imageRef)
+	return m.Scan(container)
 }
 
 // ============================================================================
@@ -188,5 +203,15 @@ func (c *AuditConfig) WithHealthCheck(
 	enable bool, // Enable or disable healthcheck verification (true to enable, false to disable)
 ) *AuditConfig {
 	c.CheckHealth = enable
+	return c
+}
+
+// IgnoreCVEs suppresses specific CVE IDs from the audit results
+// Useful for known false positives or accepted risks
+func (c *AuditConfig) IgnoreCVEs(
+	// +required
+	cveIds []string, // List of CVE IDs to ignore (e.g., ["CVE-2024-1234", "CVE-2024-5678"])
+) *AuditConfig {
+	c.IgnoredCVEs = cveIds
 	return c
 }
