@@ -1,186 +1,251 @@
 # Sentry
 
-**Container Security Auditing for Dagger Pipelines**
+<div align="center">
 
-Sentry is a Dagger module that audits container images for security vulnerabilities and misconfigurations. It integrates multiple vulnerability scanners (Trivy, Grype, Snyk, Wiz, Black Duck), performs security best practice checks, and generates compliance-ready reports for CI/CD pipelines.
+```
+███████╗███████╗███╗   ██╗████████╗██████╗ ██╗   ██╗
+██╔════╝██╔════╝████╗  ██║╚══██╔══╝██╔══██╗╚██╗ ██╔╝
+███████╗█████╗  ██╔██╗ ██║   ██║   ██████╔╝ ╚████╔╝ 
+╚════██║██╔══╝  ██║╚██╗██║   ██║   ██╔══██╗  ╚██╔╝  
+███████║███████╗██║ ╚████║   ██║   ██║  ██║   ██║   
+╚══════╝╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚═╝  ╚═╝   ╚═╝   
+```
+
+**Container Security Auditing for CI/CD Pipelines**
 
 [![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat&logo=go&logoColor=white)](https://go.dev/)
 [![Dagger](https://img.shields.io/badge/Dagger-0.19+-131313?style=flat&logo=dagger&logoColor=white)](https://dagger.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Daggerverse](https://img.shields.io/badge/Daggerverse-Sentry-6366F1?style=flat&logo=dagger&logoColor=white)](https://daggerverse.dev/mod/github.com/sylvester-francis/Sentry)
 
-## Features
+[![Trivy](https://img.shields.io/badge/Trivy-Scanner-1904DA?style=flat&logo=aqua&logoColor=white)](https://trivy.dev/)
+[![Grype](https://img.shields.io/badge/Grype-Scanner-E31C3D?style=flat&logo=anchore&logoColor=white)](https://github.com/anchore/grype)
+[![Snyk](https://img.shields.io/badge/Snyk-Scanner-4C4A73?style=flat&logo=snyk&logoColor=white)](https://snyk.io/)
+[![Wiz](https://img.shields.io/badge/Wiz-Scanner-00D1B2?style=flat)](https://wiz.io/)
+[![Black Duck](https://img.shields.io/badge/Black%20Duck-Scanner-000000?style=flat)](https://www.synopsys.com/software-integrity/security-testing/software-composition-analysis.html)
 
-- **Multi-Scanner Support** - Trivy, Grype, Snyk, Wiz, Black Duck, or custom scanners
-- **Security Checks** - Non-root user, secret detection, healthcheck validation
-- **Multiple Report Formats** - Markdown reports with executive summary, JSON for automation
-- **Security Scoring** - 0-100 score based on findings
-- **CI/CD Integration** - Pass/fail exit codes for pipeline gates
-- **Configurable Thresholds** - Fail on CRITICAL, HIGH, MEDIUM, or LOW severity
+[Installation](#installation) • [Quick Start](#quick-start) • [Documentation](#usage-guide) • [CI/CD Integration](#cicd-integration)
+
+</div>
+
+---
+
+## What is Sentry?
+
+Sentry is a security auditing tool that scans your container images for vulnerabilities and misconfigurations. It integrates with your CI/CD pipeline to automatically check containers before deployment.
+
+**Key Features:**
+- **Multi-Scanner Support** — Trivy, Grype, Snyk, Wiz, or Black Duck
+- **Security Checks** — Non-root user, secret detection, healthcheck validation
+- **Reports** — Markdown summaries, JSON for automation, 0-100 security scores
+- **CI/CD Gates** — Pass/fail exit codes to block vulnerable deployments
+
+---
+
+## What is Dagger?
+
+[Dagger](https://dagger.io) is a programmable CI/CD engine that runs your pipelines in containers. Instead of writing YAML, you write code in Go, Python, or TypeScript.
+
+**Why Dagger?**
+- **Portable** — Same pipeline runs locally and in any CI (GitHub Actions, GitLab, Jenkins)
+- **Fast** — Intelligent caching speeds up builds
+- **Reproducible** — Containers ensure consistent environments
+
+Sentry is a **Dagger Module** — a reusable component you can call from any Dagger pipeline.
+
+---
+
+## Installation
+
+### Prerequisites
+
+1. **Docker** — [Install Docker](https://docs.docker.com/get-docker/)
+2. **Dagger CLI** — Install with one command:
+
+```bash
+# macOS / Linux
+curl -fsSL https://dl.dagger.io/dagger/install.sh | sh
+
+# Windows (PowerShell)
+Invoke-WebRequest -Uri https://dl.dagger.io/dagger/install.ps1 -OutFile install.ps1; .\install.ps1
+```
+
+Verify installation:
+```bash
+dagger version
+```
+
+### No Additional Setup Required
+
+Sentry runs directly from the Daggerverse — no cloning or installing needed.
+
+---
 
 ## Quick Start
 
-### Basic Audit
+### Your First Scan
+
+Scan any container image with a single command:
 
 ```bash
-# Audit a container with default Trivy scanner
 dagger call -m github.com/sylvester-francis/Sentry \
   scan --container=nginx:latest \
   report
 ```
 
-### With Different Scanner
+**Output:**
+```
+# Security Audit Report
 
+## Executive Summary
+
+┌─────────────────────────────────────────────────────────────┐
+│  STATUS: PASSED                                             │
+├─────────────────────────────────────────────────────────────┤
+│  Score: 85/100                                              │
+│  Checks: 2 passed, 1 warning                                │
+│  Vulnerabilities: 12 total (0 critical, 2 high)             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Common Use Cases
+
+**Get a pass/fail result for CI pipelines:**
 ```bash
-# Use Grype instead of Trivy
+dagger call -m github.com/sylvester-francis/Sentry \
+  scan --container=myapp:latest \
+  exit-code
+# Returns 0 (pass) or 1 (fail)
+```
+
+**Get JSON output for automation:**
+```bash
+dagger call -m github.com/sylvester-francis/Sentry \
+  scan --container=myapp:latest \
+  json
+```
+
+**Get just the security score:**
+```bash
+dagger call -m github.com/sylvester-francis/Sentry \
+  scan --container=myapp:latest \
+  score
+# Returns: 85
+```
+
+---
+
+## Usage Guide
+
+### Choosing a Scanner
+
+Sentry supports multiple vulnerability scanners. Default is **Trivy**.
+
+| Scanner | Command | Auth Required |
+|---------|---------|---------------|
+| Trivy (default) | `with-trivy` | No |
+| Grype | `with-grype` | No |
+| Snyk | `with-snyk --token=env:SNYK_TOKEN` | Yes |
+| Wiz | `with-wiz --client-id=... --client-secret=...` | Yes |
+| Black Duck | `with-black-duck --url=... --token=...` | Yes |
+
+**Example: Use Grype instead of Trivy**
+```bash
 dagger call -m github.com/sylvester-francis/Sentry \
   scan --container=myapp:latest \
   with-grype \
   report
 ```
 
-### Get JSON Output
-
+**Example: Use Snyk with authentication**
 ```bash
-# Get machine-readable JSON for automation
-dagger call -m github.com/sylvester-francis/Sentry \
-  scan --container=myapp:latest \
-  json
-```
-
-### CI/CD Integration
-
-```bash
-# Get exit code (0=pass, 1=fail) for pipeline gates
-dagger call -m github.com/sylvester-francis/Sentry \
-  scan --container=myapp:latest \
-  exit-code
-```
-
-## Available Functions
-
-### Entry Points
-
-| Function | Description | Returns |
-|----------|-------------|---------|
-| `scan --container=<image>` | Initialize security audit for a container | `AuditConfig` |
-| `scan-image --image-ref=<ref>` | Scan from image reference string (convenience method) | `AuditConfig` |
-| `test` | Run module unit tests (43 test cases) | Test report |
-
-### Scanner Selection
-
-| Function | Description | Authentication |
-|----------|-------------|----------------|
-| `with-trivy` | Use Trivy scanner (default) | None |
-| `with-grype` | Use Grype (Anchore) scanner | None |
-| `with-snyk --token=<secret>` | Use Snyk scanner | SNYK_TOKEN |
-| `with-wiz --client-id=<secret> --client-secret=<secret>` | Use Wiz scanner | WIZ credentials |
-| `with-black-duck --url=<url> --token=<secret>` | Use Black Duck scanner | URL + token |
-| `with-custom-scanner --image=<img> --args=<args>` | Use custom scanner | Varies |
-| `without-scanner` | Disable scanning (checks only) | None |
-
-### Configuration
-
-| Function | Description | Default |
-|----------|-------------|---------|
-| `fail-on --severity=<level>` | Set minimum severity to fail audit | HIGH |
-| `with-secret-check --enable=<bool>` | Enable/disable secret detection | true |
-| `with-non-root-check --enable=<bool>` | Enable/disable non-root check | true |
-| `with-health-check --enable=<bool>` | Enable/disable healthcheck validation | true |
-| `ignore-cves --cve-ids=<list>` | Suppress specific CVE IDs from results | none |
-
-### Output
-
-| Function | Description | Format |
-|----------|-------------|--------|
-| `audit` | Get complete audit result object | `AuditResult` |
-| `report` | Generate Markdown report | Markdown |
-| `json` | Generate JSON report | JSON |
-| `summary` | Generate one-line status summary | String |
-| `score` | Get numeric security score only | 0-100 |
-| `passed` | Check if audit passed | boolean |
-| `exit-code` | Get CI/CD exit code | 0 or 1 |
-
-## Usage Examples
-
-### Production (Strict)
-
-```bash
-# Fail on HIGH or CRITICAL vulnerabilities
-dagger call -m github.com/sylvester-francis/Sentry \
-  scan --container=myapp:latest \
-  fail-on --severity=HIGH \
-  report
-```
-
-### Development (Lenient)
-
-```bash
-# Only fail on CRITICAL vulnerabilities
-dagger call -m github.com/sylvester-francis/Sentry \
-  scan --container=myapp:latest \
-  fail-on --severity=CRITICAL \
-  report
-```
-
-### With Authentication (Snyk)
-
-```bash
-# Use Snyk with authentication
-export SNYK_TOKEN=your-token
+export SNYK_TOKEN=your-token-here
 dagger call -m github.com/sylvester-francis/Sentry \
   scan --container=myapp:latest \
   with-snyk --token=env:SNYK_TOKEN \
   report
 ```
 
-### Configuration Checks Only
+### Setting Failure Thresholds
+
+Control when the audit fails based on vulnerability severity:
 
 ```bash
-# Skip vulnerability scanning, run only security checks
+# Fail only on CRITICAL vulnerabilities (lenient)
+dagger call -m github.com/sylvester-francis/Sentry \
+  scan --container=myapp:latest \
+  fail-on --severity=CRITICAL \
+  exit-code
+
+# Fail on HIGH or above (default)
+dagger call -m github.com/sylvester-francis/Sentry \
+  scan --container=myapp:latest \
+  fail-on --severity=HIGH \
+  exit-code
+
+# Fail on MEDIUM or above (strict)
+dagger call -m github.com/sylvester-francis/Sentry \
+  scan --container=myapp:latest \
+  fail-on --severity=MEDIUM \
+  exit-code
+```
+
+### Ignoring Known CVEs
+
+Suppress specific CVEs (for accepted risks or false positives):
+
+```bash
+dagger call -m github.com/sylvester-francis/Sentry \
+  scan --container=myapp:latest \
+  ignore-cves --cve-ids=CVE-2024-1234,CVE-2024-5678 \
+  report
+```
+
+### Disabling Specific Checks
+
+```bash
+# Skip non-root check (for containers that must run as root)
+dagger call -m github.com/sylvester-francis/Sentry \
+  scan --container=myapp:latest \
+  with-non-root-check --enable=false \
+  report
+
+# Skip secret detection
+dagger call -m github.com/sylvester-francis/Sentry \
+  scan --container=myapp:latest \
+  with-secret-check --enable=false \
+  report
+
+# Run security checks only (no vulnerability scanning)
 dagger call -m github.com/sylvester-francis/Sentry \
   scan --container=myapp:latest \
   without-scanner \
   report
 ```
 
-### Disable Specific Checks
+---
 
-```bash
-# Skip non-root check for containers that must run as root
-dagger call -m github.com/sylvester-francis/Sentry \
-  scan --container=myapp:latest \
-  with-non-root-check --enable=false \
-  report
-```
+## Security Checks
 
-### Use Convenience Methods
+Sentry performs these automated security checks:
 
-```bash
-# Scan from image reference string
-dagger call -m github.com/sylvester-francis/Sentry \
-  scan-image --image-ref=nginx:latest \
-  report
+| Check | Severity | Description |
+|-------|----------|-------------|
+| **Non-Root User** | HIGH | Verifies container doesn't run as root (UID 0) |
+| **Secret Detection** | HIGH | Scans environment variables for exposed credentials |
+| **Health Check** | INFO | Verifies `curl` or `wget` is available for health probes |
 
-# Get one-line summary for CI logs
-dagger call -m github.com/sylvester-francis/Sentry \
-  scan --container=myapp:latest \
-  summary
+### Secret Detection Patterns
 
-# Get just the security score
-dagger call -m github.com/sylvester-francis/Sentry \
-  scan --container=myapp:latest \
-  score
-```
+Sentry detects these credential patterns in environment variables:
+- AWS Access Keys (`AKIA...`)
+- GitHub Tokens (`ghp_`, `gho_`, `ghs_`, `ghr_`)
+- JWT Tokens (`eyJ...`)
+- Private Keys (`-----BEGIN...`)
+- Database URLs with credentials
+- Slack Tokens, API Keys
 
-### Ignore Specific CVEs
-
-```bash
-# Suppress known false positives or accepted risks
-dagger call -m github.com/sylvester-francis/Sentry \
-  scan --container=myapp:latest \
-  ignore-cves --cve-ids=CVE-2024-1234,CVE-2024-5678 \
-  report
-```
+---
 
 ## CI/CD Integration
 
@@ -197,12 +262,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Dagger
-        uses: dagger/dagger-for-github@v5
+      - name: Install Dagger
+        run: curl -fsSL https://dl.dagger.io/dagger/install.sh | sh
 
-      - name: Security Audit
+      - name: Run Security Audit
         run: |
-          dagger call -m github.com/sylvester-francis/Sentry \
+          ./bin/dagger call -m github.com/sylvester-francis/Sentry \
             scan --container=myapp:${{ github.sha }} \
             exit-code
 ```
@@ -218,12 +283,14 @@ security_audit:
   before_script:
     - curl -fsSL https://dl.dagger.io/dagger/install.sh | sh
   script:
-    - dagger call -m github.com/sylvester-francis/Sentry \
+    - ./bin/dagger call -m github.com/sylvester-francis/Sentry \
         scan --container=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA \
         exit-code
 ```
 
-### Use in Your Dagger Module
+### Using in Your Dagger Module
+
+Call Sentry from your own Dagger pipeline code:
 
 ```go
 package main
@@ -235,68 +302,36 @@ import (
 
 type MyModule struct{}
 
-func (m *MyModule) SecurityAudit(ctx context.Context, container *dagger.Container) (string, error) {
-    return dag.Sentry().
+func (m *MyModule) Build(ctx context.Context) (*dagger.Container, error) {
+    container := dag.Container().
+        From("golang:1.21").
+        // ... build steps ...
+
+    // Run security audit before deploying
+    result, err := dag.Sentry().
         Scan(container).
-        WithGrype().
-        FailOn("CRITICAL").
+        FailOn("HIGH").
         Report(ctx)
+    
+    if err != nil {
+        return nil, err
+    }
+    
+    return container, nil
 }
 ```
 
-## Security Checks
+---
 
-### Non-Root User Check (HIGH)
-Verifies the container runs as a non-root user (UID > 0). Running as root increases the impact of container escape vulnerabilities.
+## Output Formats
 
-### Secret Detection (HIGH)
-Scans environment variables for exposed credentials:
-- AWS Access Keys (`AKIA...`)
-- GitHub Tokens (`ghp_`, `gho_`, `ghs_`, `ghr_`)
-- JWT Tokens (`eyJ...`)
-- Private Keys (`-----BEGIN...`)
-- Database URLs (with credentials)
-- API Keys
+### Markdown Report (`report`)
 
-### Health Check Capability (INFO)
-Verifies `curl` or `wget` is available for implementing container health checks.
+Human-readable report with executive summary, vulnerability breakdown, and check results.
 
-## Vulnerability Scanners
+### JSON Report (`json`)
 
-| Scanner | Image | Best For | Auth Required |
-|---------|-------|----------|---------------|
-| **Trivy** | `aquasec/trivy:latest` | General purpose, fast | No |
-| **Grype** | `anchore/grype:latest` | SBOM-based analysis | No |
-| **Snyk** | `snyk/snyk:docker` | Enterprise, dev-friendly | Yes - Token |
-| **Wiz** | `wizsecurity/wiz-cli:latest` | Cloud-native, CSPM | Yes - Credentials |
-| **Black Duck** | `blackducksoftware/detect:latest` | License compliance | Yes - URL + Token |
-
-## Report Formats
-
-### Markdown Report
-
-```
-# Security Audit Report
-
-## Executive Summary
-
-┌─────────────────────────────────────────────────────────────┐
-│  STATUS: PASSED                                             │
-├─────────────────────────────────────────────────────────────┤
-│  Score: 85/100                                              │
-│  Checks: 2 passed, 1 failed                                 │
-│  Vulnerabilities: 3 total (0 critical)                      │
-└─────────────────────────────────────────────────────────────┘
-
-## Vulnerability Summary
-
-Critical:      0
-High:          1  █████
-Medium:        2  ██████████
-Low:           0
-```
-
-### JSON Report
+Machine-readable format for automation and integration:
 
 ```json
 {
@@ -309,72 +344,54 @@ Low:           0
   "vulnerabilities": [...],
   "vulnSummary": {
     "critical": 0,
-    "high": 1,
-    "medium": 2,
-    "low": 0,
-    "total": 3
+    "high": 2,
+    "medium": 5,
+    "low": 5,
+    "total": 12
   }
 }
 ```
 
-## Security Scoring
+### Security Score (`score`)
 
-Score starts at 100 and deducts points for findings:
+0-100 score based on findings. Deductions:
+- CRITICAL vulnerability: -10 points
+- HIGH vulnerability: -5 points  
+- MEDIUM vulnerability: -2 points
+- Failed security check: -15 to -25 points
 
-**Check Failures:**
-- CRITICAL: -25 points
-- HIGH: -15 points
-- MEDIUM: -10 points
-- LOW: -5 points
-- WARN: -3 points
+---
 
-**Vulnerabilities:**
-- CRITICAL: -10 points each
-- HIGH: -5 points each
-- MEDIUM: -2 points each
-- LOW: -1 point each
+## Command Reference
 
-**Score Interpretation:**
-- 90-100: Excellent (safe to deploy)
-- 70-89: Good (review findings)
-- 50-69: Fair (address high-severity issues)
-- 0-49: Poor (do not deploy)
+| Command | Description |
+|---------|-------------|
+| `scan --container=<image>` | Start audit for a container |
+| `scan-image --image-ref=<ref>` | Start audit from image reference string |
+| `with-trivy` / `with-grype` / `with-snyk` | Select vulnerability scanner |
+| `fail-on --severity=<level>` | Set failure threshold (CRITICAL/HIGH/MEDIUM/LOW) |
+| `ignore-cves --cve-ids=<list>` | Suppress specific CVE IDs |
+| `with-secret-check --enable=<bool>` | Enable/disable secret detection |
+| `with-non-root-check --enable=<bool>` | Enable/disable non-root check |
+| `report` | Generate Markdown report |
+| `json` | Generate JSON report |
+| `score` | Get numeric security score (0-100) |
+| `summary` | Get one-line status summary |
+| `passed` | Get boolean pass/fail |
+| `exit-code` | Get CI exit code (0=pass, 1=fail) |
 
-## Architecture
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                    Sentry Module                        │
-├─────────────────────────────────────────────────────────┤
-│  1. Security Checks                                     │
-│     • Non-root user verification                        │
-│     • Secret detection in environment variables         │
-│     • Health check capability validation                │
-│                                                         │
-│  2. Vulnerability Scanner (configurable)                │
-│     • Trivy (default)                                   │
-│     • Grype, Snyk, Wiz, Black Duck                      │
-│     • Custom scanner support                            │
-│                                                         │
-│  3. Report Generator                                    │
-│     • Markdown with executive summary                   │
-│     • JSON for automation                               │
-│     • Security score calculation (0-100)                │
-│                                                         │
-│  4. CI/CD Integration                                   │
-│     • Exit codes for pipeline gates                     │
-│     • Pass/fail status                                  │
-└─────────────────────────────────────────────────────────┘
-```
+---
 
 ## Troubleshooting
 
-| Issue | Cause | Solution |
-|-------|-------|----------|
-| Scanner returned empty results | Minimal image (e.g., `scratch`) | Normal behavior |
-| Container running as root | No USER directive | Add `USER nobody` to Dockerfile |
-| No curl/wget found | Minimal base image | Add health check tools or disable check |
-| 401 Unauthorized | Invalid/expired token | Refresh authentication credentials |
+| Issue | Solution |
+|-------|----------|
+| Scanner returns empty results | Normal for minimal images (e.g., `scratch`, `distroless`) |
+| "Container running as root" | Add `USER nobody` to your Dockerfile |
+| "No curl/wget found" | Add health check tools or disable check with `--with-health-check=false` |
+| 401 Unauthorized | Refresh your scanner authentication token |
+
+---
 
 ## Development
 
@@ -394,9 +411,9 @@ dagger functions
 dagger call scan --container=alpine:latest report
 ```
 
-## Contributing
+---
 
-Contributions are welcome! Please:
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
@@ -404,16 +421,14 @@ Contributions are welcome! Please:
 4. Run tests: `dagger call test`
 5. Open a Pull Request
 
-## License
-
-MIT License - see [LICENSE](https://github.com/sylvester-francis/Sentry/blob/main/LICENSE) for details.
+---
 
 ## Links
 
-- **GitHub Repository:** https://github.com/sylvester-francis/Sentry
-- **Daggerverse:** https://daggerverse.dev/mod/github.com/sylvester-francis/Sentry
-- **Issues & Feature Requests:** https://github.com/sylvester-francis/Sentry/issues
-- **Dagger Documentation:** https://docs.dagger.io/
+- [GitHub Repository](https://github.com/sylvester-francis/Sentry)
+- [Daggerverse](https://daggerverse.dev/mod/github.com/sylvester-francis/Sentry)
+- [Dagger Documentation](https://docs.dagger.io/)
+- [Report Issues](https://github.com/sylvester-francis/Sentry/issues)
 
 ---
 
