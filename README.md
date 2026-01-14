@@ -350,17 +350,17 @@ Score starts at 100 and deducts points for findings:
 │     • Non-root user verification                        │
 │     • Secret detection in environment variables         │
 │     • Health check capability validation                │
-│                                                          │
+│                                                         │
 │  2. Vulnerability Scanner (configurable)                │
 │     • Trivy (default)                                   │
-│     • Grype, Snyk, Wiz, Black Duck                     │
+│     • Grype, Snyk, Wiz, Black Duck                      │
 │     • Custom scanner support                            │
-│                                                          │
+│                                                         │
 │  3. Report Generator                                    │
 │     • Markdown with executive summary                   │
 │     • JSON for automation                               │
 │     • Security score calculation (0-100)                │
-│                                                          │
+│                                                         │
 │  4. CI/CD Integration                                   │
 │     • Exit codes for pipeline gates                     │
 │     • Pass/fail status                                  │
