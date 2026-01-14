@@ -63,6 +63,7 @@ dagger call -m github.com/sylvester-francis/Sentry \
 | Function | Description | Returns |
 |----------|-------------|---------|
 | `scan --container=<image>` | Initialize security audit for a container | `AuditConfig` |
+| `scan-image --image-ref=<ref>` | Scan from image reference string (convenience method) | `AuditConfig` |
 | `test` | Run module unit tests (43 test cases) | Test report |
 
 ### Scanner Selection
@@ -85,6 +86,7 @@ dagger call -m github.com/sylvester-francis/Sentry \
 | `with-secret-check --enable=<bool>` | Enable/disable secret detection | true |
 | `with-non-root-check --enable=<bool>` | Enable/disable non-root check | true |
 | `with-health-check --enable=<bool>` | Enable/disable healthcheck validation | true |
+| `ignore-cves --cve-ids=<list>` | Suppress specific CVE IDs from results | none |
 
 ### Output
 
@@ -93,6 +95,8 @@ dagger call -m github.com/sylvester-francis/Sentry \
 | `audit` | Get complete audit result object | `AuditResult` |
 | `report` | Generate Markdown report | Markdown |
 | `json` | Generate JSON report | JSON |
+| `summary` | Generate one-line status summary | String |
+| `score` | Get numeric security score only | 0-100 |
 | `passed` | Check if audit passed | boolean |
 | `exit-code` | Get CI/CD exit code | 0 or 1 |
 
@@ -146,6 +150,35 @@ dagger call -m github.com/sylvester-francis/Sentry \
 dagger call -m github.com/sylvester-francis/Sentry \
   scan --container=myapp:latest \
   with-non-root-check --enable=false \
+  report
+```
+
+### Use Convenience Methods
+
+```bash
+# Scan from image reference string
+dagger call -m github.com/sylvester-francis/Sentry \
+  scan-image --image-ref=nginx:latest \
+  report
+
+# Get one-line summary for CI logs
+dagger call -m github.com/sylvester-francis/Sentry \
+  scan --container=myapp:latest \
+  summary
+
+# Get just the security score
+dagger call -m github.com/sylvester-francis/Sentry \
+  scan --container=myapp:latest \
+  score
+```
+
+### Ignore Specific CVEs
+
+```bash
+# Suppress known false positives or accepted risks
+dagger call -m github.com/sylvester-francis/Sentry \
+  scan --container=myapp:latest \
+  ignore-cves --cve-ids=CVE-2024-1234,CVE-2024-5678 \
   report
 ```
 
