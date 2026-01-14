@@ -498,15 +498,6 @@ Machine-readable format for automation and integration:
 - Failed security check: -15 to -25 points
 
 ```mermaid
-pie showData
-    title Example Vulnerability Distribution
-    "Critical" : 0
-    "High" : 2
-    "Medium" : 5
-    "Low" : 5
-```
-
-```mermaid
 quadrantChart
     title Security Score Interpretation
     x-axis Low Risk --> High Risk
