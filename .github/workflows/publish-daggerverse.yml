@@ -42,17 +42,23 @@ jobs:
           fi
 
           # Determine version bump based on conventional commits
-          BUMP_TYPE="patch"
-
-          # Check for breaking changes (major bump)
-          if echo "$COMMITS" | grep -qiE "^(BREAKING CHANGE|breaking:|.*!:)"; then
-            BUMP_TYPE="major"
-          # Check for features (minor bump)
-          elif echo "$COMMITS" | grep -qiE "^feat(\(.*\))?:"; then
-            BUMP_TYPE="minor"
-          # Check for fixes and other changes (patch bump)
-          elif echo "$COMMITS" | grep -qiE "^(fix|chore|docs|style|refactor|perf|test)(\(.*\))?:"; then
+          # For 0.0.x versions, always use patch bumps
+          if [ "$MAJOR" = "0" ] && [ "$MINOR" = "0" ]; then
             BUMP_TYPE="patch"
+            echo "In 0.0.x range - using patch bump"
+          else
+            BUMP_TYPE="patch"
+
+            # Check for breaking changes (major bump)
+            if echo "$COMMITS" | grep -qiE "^(BREAKING CHANGE|breaking:|.*!:)"; then
+              BUMP_TYPE="major"
+            # Check for features (minor bump)
+            elif echo "$COMMITS" | grep -qiE "^feat(\(.*\))?:"; then
+              BUMP_TYPE="minor"
+            # Check for fixes and other changes (patch bump)
+            elif echo "$COMMITS" | grep -qiE "^(fix|chore|docs|style|refactor|perf|test)(\(.*\))?:"; then
+              BUMP_TYPE="patch"
+            fi
           fi
 
           echo "Bump type: $BUMP_TYPE"
@@ -77,6 +83,38 @@ jobs:
           git push origin $NEW_TAG
 
           echo "Created and pushed tag: $NEW_TAG"
+          echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Get the tag we just created
+          TAG=${{ env.NEW_TAG }}
+
+          # Generate release notes from commits
+          PREV_TAG=$(git describe --tags --abbrev=0 $TAG^ 2>/dev/null || echo "")
+
+          if [ -z "$PREV_TAG" ]; then
+            # First release - use all commits
+            RELEASE_NOTES=$(git log --pretty=format:"- %s (%h)" $TAG)
+          else
+            # Generate notes from commits between tags
+            RELEASE_NOTES=$(git log --pretty=format:"- %s (%h)" ${PREV_TAG}..${TAG})
+          fi
+
+          # Create release with auto-generated notes
+          gh release create $TAG \
+            --title "Release $TAG" \
+            --notes "## Changes
+
+$RELEASE_NOTES
+
+---
+
+**Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREV_TAG}...${TAG}
+
+**Daggerverse**: https://daggerverse.dev/mod/github.com/${{ github.repository }}@${TAG}"
 
       - name: Install Dagger CLI
         run: |
