@@ -1,48 +1,15 @@
-// Sentry - Container Security Auditing for Dagger Pipelines
+// Container security auditing for Dagger pipelines.
 //
-// Sentry audits container images for security vulnerabilities and misconfigurations.
-// It integrates multiple vulnerability scanners (Trivy, Grype, Snyk, Wiz, Black Duck),
-// performs security best practice checks, and generates compliance-ready reports.
+// Sentry audits container images for security vulnerabilities and misconfigurations
+// using multiple scanners (Trivy, Grype, Snyk, Wiz, Black Duck) and performs
+// security best practice checks. Generates compliance-ready reports with security
+// scoring, pass/fail status, and detailed findings.
 //
-// Features:
-//   - Multi-Scanner Support: Trivy (default), Grype, Snyk, Wiz, Black Duck, or custom scanners
-//   - Security Checks: Non-root user verification, secret detection, healthcheck validation
-//   - Multiple Report Formats: Markdown reports with executive summary, JSON for automation
-//   - Security Scoring: 0-100 score based on findings
-//   - CI/CD Integration: Pass/fail exit codes for pipeline gates
-//   - Configurable Thresholds: Fail on CRITICAL, HIGH, MEDIUM, or LOW severity
+// Example usage:
 //
-// Quick Start:
-//
-//	# Basic audit with Trivy (default)
-//	dagger call scan --container=nginx:latest report
-//
-//	# Scan from image reference (convenience method)
-//	dagger call scan-image --image-ref=nginx:latest report
-//
-//	# Use Grype scanner
-//	dagger call scan --container=myapp:latest with-grype report
-//
-//	# Get JSON output
-//	dagger call scan --container=myapp:latest json
-//
-//	# Get one-line summary for CI logs
-//	dagger call scan --container=myapp:latest summary
-//
-//	# Get numeric security score (0-100)
-//	dagger call scan --container=myapp:latest score
-//
-//	# Ignore specific CVEs
-//	dagger call scan --container=myapp:latest ignore-cves --cve-ids=CVE-2024-1234,CVE-2024-5678 report
-//
-//	# CI/CD exit code (0=pass, 1=fail)
-//	dagger call scan --container=myapp:latest exit-code
-//
-//	# Configure failure threshold
-//	dagger call scan --container=myapp:latest fail-on --severity=CRITICAL report
-//
-// GitHub: https://github.com/sylvester-francis/Sentry
-// License: MIT
+//	dagger call scan-image --image-ref nginx:latest report
+//	dagger call scan-image --image-ref myapp:latest with-grype summary
+//	dagger call scan-image --image-ref myapp:latest ignore-cves --cve-ids CVE-2024-1234 score
 package main
 
 import (
