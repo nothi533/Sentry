@@ -15,6 +15,106 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for tags
+
+      - name: Create semantic version tag
+        run: |
+          # Configure git
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Get the latest tag, default to v0.0.0 if no tags exist
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          echo "Latest tag: $LATEST_TAG"
+
+          # Parse version components (remove 'v' prefix)
+          VERSION=${LATEST_TAG#v}
+          MAJOR=$(echo $VERSION | cut -d. -f1)
+          MINOR=$(echo $VERSION | cut -d. -f2)
+          PATCH=$(echo $VERSION | cut -d. -f3)
+
+          # Get commits since last tag
+          if [ "$LATEST_TAG" = "v0.0.0" ]; then
+            COMMITS=$(git log --pretty=format:"%s")
+          else
+            COMMITS=$(git log ${LATEST_TAG}..HEAD --pretty=format:"%s")
+          fi
+
+          # Determine version bump based on conventional commits
+          # For 0.0.x versions, always use patch bumps
+          if [ "$MAJOR" = "0" ] && [ "$MINOR" = "0" ]; then
+            BUMP_TYPE="patch"
+            echo "In 0.0.x range - using patch bump"
+          else
+            BUMP_TYPE="patch"
+
+            # Check for breaking changes (major bump)
+            if echo "$COMMITS" | grep -qiE "^(BREAKING CHANGE|breaking:|.*!:)"; then
+              BUMP_TYPE="major"
+            # Check for features (minor bump)
+            elif echo "$COMMITS" | grep -qiE "^feat(\(.*\))?:"; then
+              BUMP_TYPE="minor"
+            # Check for fixes and other changes (patch bump)
+            elif echo "$COMMITS" | grep -qiE "^(fix|chore|docs|style|refactor|perf|test)(\(.*\))?:"; then
+              BUMP_TYPE="patch"
+            fi
+          fi
+
+          echo "Bump type: $BUMP_TYPE"
+
+          # Calculate new version
+          if [ "$BUMP_TYPE" = "major" ]; then
+            MAJOR=$((MAJOR + 1))
+            MINOR=0
+            PATCH=0
+          elif [ "$BUMP_TYPE" = "minor" ]; then
+            MINOR=$((MINOR + 1))
+            PATCH=0
+          else
+            PATCH=$((PATCH + 1))
+          fi
+
+          NEW_TAG="v${MAJOR}.${MINOR}.${PATCH}"
+          echo "New tag: $NEW_TAG"
+
+          # Create and push tag
+          git tag -a $NEW_TAG -m "Release $NEW_TAG"
+          git push origin $NEW_TAG
+
+          echo "Created and pushed tag: $NEW_TAG"
+          echo "NEW_TAG=$NEW_TAG" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Get the tag we just created
+          TAG=${{ env.NEW_TAG }}
+
+          # Generate release notes from commits
+          PREV_TAG=$(git describe --tags --abbrev=0 $TAG^ 2>/dev/null || echo "")
+
+          if [ -z "$PREV_TAG" ]; then
+            # First release - use all commits
+            RELEASE_NOTES=$(git log --pretty=format:"- %s (%h)" $TAG)
+          else
+            # Generate notes from commits between tags
+            RELEASE_NOTES=$(git log --pretty=format:"- %s (%h)" ${PREV_TAG}..${TAG})
+          fi
+
+          # Create release with auto-generated notes
+          gh release create $TAG \
+            --title "Release $TAG" \
+            --notes "## Changes
+
+$RELEASE_NOTES
+
+---
+
+**Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREV_TAG}...${TAG}
+
+**Daggerverse**: https://daggerverse.dev/mod/github.com/${{ github.repository }}@${TAG}"
 
       - name: Install Dagger CLI
         run: |
@@ -30,9 +130,9 @@ jobs:
 
       - name: Publish to Daggerverse
         run: |
-          # Get the current commit SHA
-          COMMIT_SHA=$(git rev-parse HEAD)
-          MODULE_REF="github.com/${{ github.repository }}@${COMMIT_SHA}"
+          # Get the latest tag (just created)
+          LATEST_TAG=$(git describe --tags --abbrev=0)
+          MODULE_REF="github.com/${{ github.repository }}@${LATEST_TAG}"
 
           echo "Publishing module: ${MODULE_REF}"
 
@@ -41,6 +141,6 @@ jobs:
           dagger call -m ${MODULE_REF} --help || true
 
           echo "Module called successfully - Daggerverse will index it automatically"
-          echo "View at: https://daggerverse.dev/mod/github.com/${{ github.repository }}"
+          echo "View at: https://daggerverse.dev/mod/github.com/${{ github.repository }}@${LATEST_TAG}"
         env:
           DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}

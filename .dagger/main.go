@@ -1,39 +1,20 @@
-// Sentry - Container Security Auditing for Dagger Pipelines
+// Container security auditing for Dagger pipelines.
 //
-// Sentry audits container images for security vulnerabilities and misconfigurations.
-// It integrates multiple vulnerability scanners (Trivy, Grype, Snyk, Wiz, Black Duck),
-// performs security best practice checks, and generates compliance-ready reports.
+// Sentry audits container images for security vulnerabilities and misconfigurations
+// using multiple scanners (Trivy, Grype, Snyk, Wiz, Black Duck) and performs
+// security best practice checks. Generates compliance-ready reports with security
+// scoring, pass/fail status, and detailed findings.
 //
-// Features:
-//   - Multi-Scanner Support: Trivy (default), Grype, Snyk, Wiz, Black Duck, or custom scanners
-//   - Security Checks: Non-root user verification, secret detection, healthcheck validation
-//   - Multiple Report Formats: Markdown reports with executive summary, JSON for automation
-//   - Security Scoring: 0-100 score based on findings
-//   - CI/CD Integration: Pass/fail exit codes for pipeline gates
-//   - Configurable Thresholds: Fail on CRITICAL, HIGH, MEDIUM, or LOW severity
+// Example usage:
 //
-// Quick Start:
-//
-//	# Basic audit with Trivy (default)
-//	dagger call scan --container=nginx:latest report
-//
-//	# Use Grype scanner
-//	dagger call scan --container=myapp:latest with-grype report
-//
-//	# Get JSON output
-//	dagger call scan --container=myapp:latest json
-//
-//	# CI/CD exit code (0=pass, 1=fail)
-//	dagger call scan --container=myapp:latest exit-code
-//
-//	# Configure failure threshold
-//	dagger call scan --container=myapp:latest fail-on --severity=CRITICAL report
-//
-// GitHub: https://github.com/sylvester-francis/Sentry
-// License: MIT
+//	dagger call scan-image --image-ref nginx:latest report
+//	dagger call scan-image --image-ref myapp:latest with-grype summary
+//	dagger call scan-image --image-ref myapp:latest ignore-cves --cve-ids CVE-2024-1234 score
 package main
 
 import (
+	"context"
+
 	"dagger/sentry/internal/dagger"
 )
 
@@ -49,6 +30,7 @@ type AuditConfig struct {
 	CheckSecrets   bool              // Check for secrets in env vars
 	CheckNonRoot   bool              // Check for non-root user
 	CheckHealth    bool              // Check for healthcheck
+	IgnoredCVEs    []string          // CVE IDs to ignore (suppress from results)
 }
 
 // ============================================================================
@@ -73,6 +55,18 @@ func (m *Sentry) Scan(
 		CheckNonRoot:   true,
 		CheckHealth:    true,
 	}
+}
+
+// ScanImage initializes a security audit from a container image reference
+// This is a convenience method that pulls the image and scans it
+// Returns an AuditConfig that can be further configured with chain methods
+func (m *Sentry) ScanImage(
+	ctx context.Context,
+	// +required
+	imageRef string, // Container image reference (e.g., "nginx:latest", "alpine:3.18")
+) *AuditConfig {
+	container := dag.Container().From(imageRef)
+	return m.Scan(container)
 }
 
 // ============================================================================
@@ -188,5 +182,15 @@ func (c *AuditConfig) WithHealthCheck(
 	enable bool, // Enable or disable healthcheck verification (true to enable, false to disable)
 ) *AuditConfig {
 	c.CheckHealth = enable
+	return c
+}
+
+// IgnoreCVEs suppresses specific CVE IDs from the audit results
+// Useful for known false positives or accepted risks
+func (c *AuditConfig) IgnoreCVEs(
+	// +required
+	cveIds []string, // List of CVE IDs to ignore (e.g., ["CVE-2024-1234", "CVE-2024-5678"])
+) *AuditConfig {
+	c.IgnoredCVEs = cveIds
 	return c
 }
