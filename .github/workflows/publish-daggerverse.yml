@@ -25,6 +25,8 @@ jobs:
       - name: Verify module structure
         run: |
           dagger functions
+        env:
+          DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
 
       - name: Publish to Daggerverse
         run: |
@@ -40,3 +42,5 @@ jobs:
 
           echo "Module called successfully - Daggerverse will index it automatically"
           echo "View at: https://daggerverse.dev/mod/github.com/${{ github.repository }}"
+        env:
+          DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
