@@ -17,11 +17,23 @@
 //	# Basic audit with Trivy (default)
 //	dagger call scan --container=nginx:latest report
 //
+//	# Scan from image reference (convenience method)
+//	dagger call scan-image --image-ref=nginx:latest report
+//
 //	# Use Grype scanner
 //	dagger call scan --container=myapp:latest with-grype report
 //
 //	# Get JSON output
 //	dagger call scan --container=myapp:latest json
+//
+//	# Get one-line summary for CI logs
+//	dagger call scan --container=myapp:latest summary
+//
+//	# Get numeric security score (0-100)
+//	dagger call scan --container=myapp:latest score
+//
+//	# Ignore specific CVEs
+//	dagger call scan --container=myapp:latest ignore-cves --cve-ids=CVE-2024-1234,CVE-2024-5678 report
 //
 //	# CI/CD exit code (0=pass, 1=fail)
 //	dagger call scan --container=myapp:latest exit-code
